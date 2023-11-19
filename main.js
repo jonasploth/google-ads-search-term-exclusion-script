@@ -11,6 +11,9 @@ function main() {
   var costThreshold = 50000000; // Cost in Microunits (€50 = 50,000,000)
   var daysAgo = 90; //How many Days to count backwards in report
 
+
+//DONT TOUCH CODE BELOW THAT LINE//
+
   var sheet = SpreadsheetApp.openByUrl(spreadsheetUrl).getActiveSheet();
   sheet.appendRow(['Suchbegriff', 'Kosten', 'Conversions']);
 
