@@ -1,4 +1,4 @@
-//© 2023, Jonas Ploth / Exceed Your Limits FZCO. Alle Rechte vorbehalten.
+//© 2023, Jonas Ploth. Alle Rechte vorbehalten.
 //In keinem Fall sind die Autoren oder Urheberrechtsinhaber haftbar für irgendwelche Ansprüche, Schäden oder andere Verbindlichkeiten, 
 //die im Zusammenhang mit dem Software-Code oder dessen Nutzung oder anderen Handlungen im Zusammenhang damit stehen.
 //Die Nutzung, Vervielfältigung, Modifikation, Verbreitung oder Weitergabe dieses Codes oder Teile davon ist ohne 
