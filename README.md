@@ -1,11 +1,10 @@
-# google-ads-search-term-exclusion-scrip
+# google-ads-search-term-exclusion-script
 # Documentation for Google Ads Script: Search Term Analysis and Export to Google Sheets
 Overview
 This script is designed to analyze search terms from a specific Google Ads campaign over the last 90 days. It filters and exports search terms that have resulted in 0 conversions but have incurred costs exceeding €50 to a Google Sheet.
 
 Prerequisites
 Access to a Google Ads account.
-A Google Cloud Platform project with Google Sheets API enabled (if necessary).
 Basic knowledge of Google Ads and Google Apps Script.
 Setup Instructions
 Google Sheets Preparation:
