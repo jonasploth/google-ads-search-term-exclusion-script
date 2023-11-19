@@ -5,19 +5,18 @@
 //die ausdrückliche schriftliche Genehmigung des Urheberrechtsinhabers strengstens untersagt.
 
 
-
 function main() {
-  var spreadsheetUrl = 'https://docs.google.com/spreadsheets/d/19ppXZ5zGwv75mukoU-6_xK1H5XEOR2cUymXsDDG1TYo/'; // Spreadsheet URL
-  var campaignId = '18459565600'; // Kampagnen-ID
-  var sheet = SpreadsheetApp.openByUrl(spreadsheetUrl).getActiveSheet();
+  var spreadsheetUrl = 'YOUR_SPREADSHEET_URL'; // Replace with your Spreadsheet URL
+  var campaignId = 'YOUR_CAMPAIGN_ID'; // Replace with campaign id
+  var costThreshold = 50000000; // Cost in Microunits (€50 = 50,000,000)
+  var daysAgo = 90; //How many Days to count backwards in report
 
-   // Überschriften setzen
+  var sheet = SpreadsheetApp.openByUrl(spreadsheetUrl).getActiveSheet();
   sheet.appendRow(['Suchbegriff', 'Kosten', 'Conversions']);
 
-  // Berechnung des Datumsbereichs für die letzten 90 Tage
   var endDate = new Date();
   var startDate = new Date();
-  startDate.setDate(endDate.getDate() - 90);
+  startDate.setDate(endDate.getDate() - daysAgo);
   
   var formattedStartDate = Utilities.formatDate(startDate, "PST", "yyyyMMdd");
   var formattedEndDate = Utilities.formatDate(endDate, "PST", "yyyyMMdd");
@@ -26,7 +25,7 @@ function main() {
               "FROM SEARCH_QUERY_PERFORMANCE_REPORT " +
               "WHERE CampaignId = '" + campaignId + "' " +
               "AND Conversions = 0 " +
-              "AND Cost > 30000000 " + // Kosten in Mikroeinheiten
+              "AND Cost > " + costThreshold + " " +
               "DURING " + formattedStartDate + "," + formattedEndDate;
 
   var report = AdsApp.report(query);
@@ -34,7 +33,7 @@ function main() {
   while (rows.hasNext()) {
     var row = rows.next();
     var query = row['Query'];
-    var cost = parseFloat(row['Cost']); // Umrechnung von Mikroeinheiten in Euro
+    var cost = parseFloat(row['Cost']); 
     var conversions = row['Conversions'];
     sheet.appendRow([query, cost, conversions]);
   }
