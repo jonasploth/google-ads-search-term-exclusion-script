@@ -4,15 +4,18 @@
 //Die Nutzung, Vervielfältigung, Modifikation, Verbreitung oder Weitergabe dieses Codes oder Teile davon ist ohne 
 //die ausdrückliche schriftliche Genehmigung des Urheberrechtsinhabers strengstens untersagt.
 
-function main() {
-  var spreadsheetUrl = 'IHR_SPREADSHEET_URL'; // Ersetzen Sie dies durch die URL Ihres Google Sheets
-  var campaignId = 'IHRE_KAMPAGNEN_ID'; // Ersetzen Sie dies durch Ihre CampaignID
-  var costThreshold = 50000000; // Kosten in Mikroeinheiten (€50 = 50,000,000)
-  var daysAgo = 90; // Anzahl der Tage für den Zeitraum
-  var createAndExclude = 'YES'; // Setzen Sie dies auf 'YES' oder 'NO'
 
+// Configuration Start
+function main() {
+  var spreadsheetUrl = 'IHR_SPREADSHEET_URL'; // Replace with Google Sheet URL (new created)
+  var campaignId = 'IHRE_KAMPAGNEN_ID'; // Replace with Campaign ID
+  var costThreshold = 50000000; // Cost in Micro Unit (€50 = 50,000,000)
+  var daysAgo = 90; // Timeframe
+  var createAndExclude = 'YES'; // YES/NO
+// Configuration End
+// DO NOT TOUCH BELOW HERE 
   var sheet = SpreadsheetApp.openByUrl(spreadsheetUrl).getActiveSheet();
-  sheet.appendRow(['Suchbegriff', 'Kosten', 'Conversions']);
+  sheet.appendRow(['Query', 'Cost', 'Conversion']);
 
   var endDate = new Date();
   var startDate = new Date();
