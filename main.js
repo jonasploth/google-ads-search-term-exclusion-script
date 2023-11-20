@@ -6,18 +6,25 @@
 
 
 function main() {
-  // ------------------------- START OF CONFIGURATION -------------------------
+  // Configuration Section
   var spreadsheetUrl = 'YOUR_SPREADSHEET_URL'; // Replace with the URL of your Google Sheet
   var campaignIds = ['CAMPAIGN_ID_1', 'CAMPAIGN_ID_2', 'CAMPAIGN_ID_3']; // Add campaign IDs as an array
   var costThreshold = 50000000; // Cost threshold in micro-units (€50 = 50,000,000)
   var daysAgo = 90; // Number of days for the time period
   var createAndExclude = 'NO'; // Set to 'YES' or 'NO'
-  // -------------------------- END OF CONFIGURATION --------------------------
 
   // DO NOT TOUCH CODE BELOW HERE
 
-  var sheet = SpreadsheetApp.openByUrl(spreadsheetUrl).getActiveSheet();
-  sheet.appendRow(['Campaign ID', 'Search Term', 'Cost', 'Conversions']);
+  var spreadsheet = SpreadsheetApp.openByUrl(spreadsheetUrl);
+  var today = Utilities.formatDate(new Date(), "GMT", "yyyyMMdd");
+  var sheetName = "Scan on " + today;
+  var sheet = spreadsheet.getSheetByName(sheetName);
+
+  // Create a new sheet if it doesn't exist
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(sheetName);
+    sheet.appendRow(['Campaign Name', 'Search Term', 'Cost', 'Conversions']);
+  }
 
   var endDate = new Date();
   var startDate = new Date();
@@ -28,6 +35,8 @@ function main() {
 
   for (var i = 0; i < campaignIds.length; i++) {
     var campaignId = campaignIds[i];
+    var campaignName = getCampaignNameById(campaignId); // Fetch the campaign name
+
     var query = "SELECT CampaignId, Query, Cost, Conversions " +
                 "FROM SEARCH_QUERY_PERFORMANCE_REPORT " +
                 "WHERE CampaignId = '" + campaignId + "' " +
@@ -44,7 +53,7 @@ function main() {
       var searchTerm = row['Query'];
       var cost = parseFloat(row['Cost']) / 1000000; // Convert cost from micro-units to Euros
       var conversions = row['Conversions'];
-      sheet.appendRow([campaignId, searchTerm, cost, conversions]);
+      sheet.appendRow([campaignName, searchTerm, cost, conversions]);
 
       if (createAndExclude === 'YES') {
         exclusionList.push(searchTerm);
@@ -57,8 +66,26 @@ function main() {
   }
 }
 
+function getCampaignNameById(campaignId) {
+  var campaignIterator = AdsApp.campaigns()
+                          .withIds([campaignId])
+                          .get();
+  if (campaignIterator.hasNext()) {
+    return campaignIterator.next().getName();
+  }
+  return 'Unknown Campaign'; // Default name if the campaign is not found
+}
+
 function addKeywordsToExclusionList(campaignId, keywords) {
   var campaign = AdsApp.campaigns().withIds([campaignId]).get().next();
   var negativeKeywordList = AdsApp.newNegativeKeywordListBuilder()
-      .withName('Exclusion List for Campaign ' 
+      .withName('Exclusion List for Campaign ' + campaignId)
+      .build()
+      .getResult();
 
+  for (var i = 0; i < keywords.length; i++) {
+    negativeKeywordList.addNegativeKeyword(keywords[i]);
+  }
+
+  campaign.addNegativeKeywordList(negativeKeywordList);
+}
