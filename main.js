@@ -12,19 +12,20 @@ function main() {
   var costThresholdInEuros = 50; // Cost threshold in Euros (e.g., €50)
   var daysAgo = 90; // Number of days for the time period
   var createAndExclude = 'NO'; // Set to 'YES' or 'NO'
-
-  // DO NOT TOUCH CODE BELOW HERE
-  
-  // convert Euro in Microunits
+  var notificationEmail = 'YOUR_EMAIL_ADDRESS'; // Set the email address for notifications
+  var emailSubject = 'Google Ads Script Report Completed'; // Customize the email subject
+  var emailBody = 'The report for your Google Ads campaigns has been completed.\n\nYou can view the report at: ' + spreadsheetUrl; // Customize the email body
+  // Convert cost threshold to micro-units
   var costThreshold = costThresholdInEuros * 1000000;
 
-  //creation spreedsheet & checking if data in spreadsheet
+  // DO NOT TOUCH CODE BELOW HERE
+
   var spreadsheet = SpreadsheetApp.openByUrl(spreadsheetUrl);
   var today = Utilities.formatDate(new Date(), "GMT", "yyyyMMdd");
   var sheetName = "Scan on " + today;
   var sheet = spreadsheet.getSheetByName(sheetName);
 
-  // Create a new sheet if it does not exist
+  // Create a new sheet if not existing for date
   if (!sheet) {
     sheet = spreadsheet.insertSheet(sheetName);
     sheet.appendRow(['Campaign Name', 'Search Term', 'Cost', 'Conversions']);
@@ -39,7 +40,7 @@ function main() {
 
   for (var i = 0; i < campaignIds.length; i++) {
     var campaignId = campaignIds[i];
-    var campaignName = getCampaignNameById(campaignId); // get campaign name from id
+    var campaignName = getCampaignNameById(campaignId); // get campaign name
 
     var query = "SELECT CampaignId, Query, Cost, Conversions " +
                 "FROM SEARCH_QUERY_PERFORMANCE_REPORT " +
@@ -55,20 +56,22 @@ function main() {
     while (rows.hasNext()) {
       var row = rows.next();
       var searchTerm = row['Query'];
-      var cost = parseFloat(row['Cost']); 
+      var cost = parseFloat(row['Cost']); // Convert cost from micro-units to Euros
       var conversions = row['Conversions'];
       sheet.appendRow([campaignName, searchTerm, cost, conversions]);
-      
-      //check if list should be created or not
+//check if needed to create exclusion list
       if (createAndExclude === 'YES') {
         exclusionList.push(searchTerm);
       }
     }
-
+//add search terms as keywords to exclude
     if (createAndExclude === 'YES' && exclusionList.length > 0) {
-      addKeywordsToExclusionList(campaignId, exclusionList);
+      addKeywordsToExclusionList(campaignId, exclusionList); // add list to campaign
     }
   }
+
+  // Send email notification
+  MailApp.sendEmail(notificationEmail, emailSubject, emailBody);
 }
 
 function getCampaignNameById(campaignId) {
