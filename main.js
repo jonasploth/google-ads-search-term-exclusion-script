@@ -1,14 +1,15 @@
-//© 2023, Jonas Ploth . Alle Rechte vorbehalten.
-//In keinem Fall sind die Autoren oder Urheberrechtsinhaber haftbar für irgendwelche Ansprüche, Schäden oder andere Verbindlichkeiten, 
-//die im Zusammenhang mit dem Software-Code oder dessen Nutzung oder anderen Handlungen im Zusammenhang damit stehen.
-//Die Nutzung, Vervielfältigung, Modifikation, Verbreitung oder Weitergabe dieses Codes oder Teile davon ist ohne 
-//die ausdrückliche schriftliche Genehmigung des Urheberrechtsinhabers strengstens untersagt.
+//© 2023, Jonas Ploth. All rights reserved.
+//In no event shall the authors or copyright holders be liable for any claims, damages, or other liabilities,
+//arising from or in connection with the software code or its use or other dealings in the software.
+//The use, duplication, modification, distribution, or dissemination of this code or parts thereof is strictly prohibited without
+//the express written permission of the copyright holder.
 
 
 function main() {
+  
   // Configuration Section
   var spreadsheetUrl = 'YOUR_SPREADSHEET_URL'; // Replace with the URL of your Google Sheet
-  var campaignIds = ['CAMPAIGN_ID_1', 'CAMPAIGN_ID_2', 'CAMPAIGN_ID_3']; // Add campaign IDs as an array
+  var campaignIds = ['CAMPAIGN_ID_1', 'CAMPAIGN_ID_2', 'CAMPAIGN_ID_3']; // Add campaign IDs 
   var costThresholdInEuros = 50; // Cost threshold in Euros (e.g., €50)
   var daysAgo = 90; // Number of days for the time period
   var createAndExclude = 'NO'; // Set to 'YES' or 'NO'
@@ -16,7 +17,8 @@ function main() {
   var emailSubject = 'Google Ads Script Report Completed'; // Customize the email subject
   var emailBody = 'The report for your Google Ads campaigns has been completed.\n\n' +
                   'You can view the report at: ' + spreadsheetUrl; // Customize the email body
-
+  // Configuration Section
+  
   // Convert cost threshold to micro-units
   var costThreshold = costThresholdInEuros * 1000000;
   var excludedKeywordsInfo = []; // To keep track of excluded keywords
@@ -26,7 +28,7 @@ function main() {
   var sheetName = "Scan on " + today;
   var sheet = spreadsheet.getSheetByName(sheetName);
 
-  // Create a new sheet if it doesn't exist
+  // Create a new sheet
   if (!sheet) {
     sheet = spreadsheet.insertSheet(sheetName);
     sheet.appendRow(['Campaign Name', 'Search Term', 'Cost', 'Conversions']);
@@ -41,7 +43,7 @@ function main() {
 
   for (var i = 0; i < campaignIds.length; i++) {
     var campaignId = campaignIds[i];
-    var campaignName = getCampaignNameById(campaignId); // Fetch the campaign name
+    var campaignName = getCampaignNameById(campaignId); // get campaignName
 
     var query = "SELECT CampaignId, Query, Cost, Conversions " +
                 "FROM SEARCH_QUERY_PERFORMANCE_REPORT " +
@@ -57,7 +59,7 @@ function main() {
     while (rows.hasNext()) {
       var row = rows.next();
       var searchTerm = row['Query'];
-      var cost = parseFloat(row['Cost']) / 1000000; // Convert cost from micro-units to Euros
+      var cost = parseFloat(row['Cost']); 
       var conversions = row['Conversions'];
       sheet.appendRow([campaignName, searchTerm, cost, conversions]);
 
@@ -121,3 +123,4 @@ function addKeywordsToExclusionList(campaignId, keywords) {
   campaign.addNegativeKeywordList(negativeKeywordList);
   return excludedCount;
 }
+
