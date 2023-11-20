@@ -7,8 +7,8 @@
 
 // Configuration Start
 function main() {
-  var spreadsheetUrl = 'IHR_SPREADSHEET_URL'; // Replace with Google Sheet URL (new created)
-  var campaignId = 'IHRE_KAMPAGNEN_ID'; // Replace with Campaign ID
+  var spreadsheetUrl = 'YOUR_SPREADSHEET_URL'; // Replace with Google Sheet URL (new created)
+  var campaignId = 'YOUR_CAMPAIGN_ID'; // Replace with Campaign ID
   var costThreshold = 50000000; // Cost in Micro Unit (€50 = 50,000,000)
   var daysAgo = 90; // Timeframe
   var createAndExclude = 'YES'; // YES/NO
