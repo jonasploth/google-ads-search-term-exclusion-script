@@ -87,13 +87,15 @@ function getCampaignNameById(campaignId) {
 function addKeywordsToExclusionList(campaignId, keywords) {
   var campaign = AdsApp.campaigns().withIds([campaignId]).get().next();
   var negativeKeywordList = AdsApp.newNegativeKeywordListBuilder()
-      .withName('Exclusion List for Campaign ' + campaignName)
+      .withName('Exclusion List for Campaign ' + campaignId)
       .build()
       .getResult();
 
   for (var i = 0; i < keywords.length; i++) {
-    negativeKeywordList.addNegativeKeyword(keywords[i]);
+    var exactMatchKeyword = '[' + keywords[i] + ']'; // Formatierung als Exact Match
+    negativeKeywordList.addNegativeKeyword(exactMatchKeyword);
   }
 
   campaign.addNegativeKeywordList(negativeKeywordList);
 }
+
