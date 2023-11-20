@@ -9,18 +9,22 @@ function main() {
   // Configuration Section
   var spreadsheetUrl = 'YOUR_SPREADSHEET_URL'; // Replace with the URL of your Google Sheet
   var campaignIds = ['CAMPAIGN_ID_1', 'CAMPAIGN_ID_2', 'CAMPAIGN_ID_3']; // Add campaign IDs as an array
-  var costThreshold = 50000000; // Cost threshold in micro-units (€50 = 50,000,000)
+  var costThresholdInEuros = 50; // Cost threshold in Euros (e.g., €50)
   var daysAgo = 90; // Number of days for the time period
   var createAndExclude = 'NO'; // Set to 'YES' or 'NO'
 
   // DO NOT TOUCH CODE BELOW HERE
+  
+  // convert Euro in Microunits
+  var costThreshold = costThresholdInEuros * 1000000;
 
+  //creation spreedsheet & checking if data in spreadsheet
   var spreadsheet = SpreadsheetApp.openByUrl(spreadsheetUrl);
   var today = Utilities.formatDate(new Date(), "GMT", "yyyyMMdd");
   var sheetName = "Scan on " + today;
   var sheet = spreadsheet.getSheetByName(sheetName);
 
-  // Create a new sheet if it doesn't exist
+  // Create a new sheet if it does not exist
   if (!sheet) {
     sheet = spreadsheet.insertSheet(sheetName);
     sheet.appendRow(['Campaign Name', 'Search Term', 'Cost', 'Conversions']);
@@ -35,7 +39,7 @@ function main() {
 
   for (var i = 0; i < campaignIds.length; i++) {
     var campaignId = campaignIds[i];
-    var campaignName = getCampaignNameById(campaignId); // Fetch the campaign name
+    var campaignName = getCampaignNameById(campaignId); // get campaign name from id
 
     var query = "SELECT CampaignId, Query, Cost, Conversions " +
                 "FROM SEARCH_QUERY_PERFORMANCE_REPORT " +
@@ -51,10 +55,11 @@ function main() {
     while (rows.hasNext()) {
       var row = rows.next();
       var searchTerm = row['Query'];
-      var cost = parseFloat(row['Cost']) / 1000000; // Convert cost from micro-units to Euros
+      var cost = parseFloat(row['Cost']); 
       var conversions = row['Conversions'];
       sheet.appendRow([campaignName, searchTerm, cost, conversions]);
-
+      
+      //check if list should be created or not
       if (createAndExclude === 'YES') {
         exclusionList.push(searchTerm);
       }
@@ -79,7 +84,7 @@ function getCampaignNameById(campaignId) {
 function addKeywordsToExclusionList(campaignId, keywords) {
   var campaign = AdsApp.campaigns().withIds([campaignId]).get().next();
   var negativeKeywordList = AdsApp.newNegativeKeywordListBuilder()
-      .withName('Exclusion List for Campaign ' + campaignId)
+      .withName('Exclusion List for Campaign ' + campaignName)
       .build()
       .getResult();
 
